@@ -11,6 +11,16 @@ import platform
 import multiprocessing
 import psutil
 
+#
+# requirements.txt
+# (
+#  numpy==1.26.2
+#  psutil==5.9.7
+#  termplotlib==0.3.9
+# )
+#
+
+#
 # Small I/O testing Python code. 
 #
 # o Writes a user specified number of files to each directory of a user spcified number of directories. 
@@ -88,6 +98,7 @@ nd=ND
 nf=NF
 nbytes=NB
 dedup_testing=True
+vary_file_content=False
 
 # Write some summary
 print("#R_%s Start time: %s"%(MYRANK,(datetime.datetime.now()).__str__() ))
@@ -131,6 +142,11 @@ proc_iotime=np.float64(0.)
 # For histogram
 io_time_arr=np.zeros(nd*nf)
 
+# Fixed random numbers, for doing identical to every file.
+rng = np.random.default_rng(12345)
+phi_fixed=rng.integers(low=-np.array([2**63-1]),high=np.array([2**63-1]),size=int(nbytes/8))
+phi=phi_fixed
+
 # Do some I/O
 for dnum in range(nd):
     if dedup_testing:
@@ -138,7 +154,8 @@ for dnum in range(nd):
         rng = np.random.default_rng(12345)
     for fnum in range(nf):
         # Generate random data on the fly
-        phi=rng.integers(low=-np.array([2**63-1]),high=np.array([2**63-1]),size=int(nbytes/8))
+        if vary_file_content:
+             phi=rng.integers(low=-np.array([2**63-1]),high=np.array([2**63-1]),size=int(nbytes/8))
         fout="%s/d_%6.6d/foo%d.out"%(DROOT,dnum,fnum)
 
         # Timed I/O begins here (probably should use _ns for small I/O )
@@ -213,4 +230,3 @@ fig.show()
 print("#R_%s Mean of per file bytes per sec: %s/sec"%(MYRANK,bytes2human(np.mean(sample))))
 print("#R_%s Median of per file bytes per sec: %s/sec"%(MYRANK,bytes2human(np.median(sample))))
 print("#R_%s End time: %s"%(MYRANK,(datetime.datetime.now()).__str__() ))
-
