@@ -53,6 +53,21 @@ import psutil
 # a simple check. It can be compared against a reference value to look for anomalous 
 # performance.
 #
+# Two flags in the code can be used to change behavior
+#  1. dedup_testing=True
+#     The default setting ( True ) uses the same seed for every directory. This means that each directory
+#     will have files with the same content written. This can test dedup capabilities for cases where
+#     the file data varies.
+#
+#  2. vary_file_content=False
+#     The default setting ( False ) means that every file will have the same content. This can be used
+#     to test dedup where every file in every directory has the same content.
+#
+# the default settings has the fastest runtimes as they ony generate random data to use once. Generating
+# random data requires a non-negligible amut of CPU time.
+#
+# The timing statistics reported in "Elapsed I/O time:" are timing of elapsed time for the I/O stages only.
+#
 #
 
 def bytes2human(n):
@@ -99,6 +114,9 @@ nf=NF
 nbytes=NB
 dedup_testing=True
 vary_file_content=False
+if vary_file_content:
+    dedup_testing=True
+
 
 # Write some summary
 print("#R_%s Start time: %s"%(MYRANK,(datetime.datetime.now()).__str__() ))
