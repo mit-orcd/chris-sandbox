@@ -1,0 +1,6 @@
+#!/bin/bash
+ldapsearch -x -H ldap://eofe-ldap/ objectClass=automount | grep 'cn:' | awk -F: '{print $2}' | sed s'/^ \([^/]\)\(.*\)/\/nfs\/\1\2/' | grep '/[^/]*/.*' | awk '{print $1}'
+
+# Generate script to check they are present
+# cat all-filesystems.txt | awk '{print "waitmax -s 9 5 stat "$1"; echo \"#   \" $? \" "$1"\"; sleep 2"}' > check_fs.scr
+# source check_fs.scr | tee check_fs.out
