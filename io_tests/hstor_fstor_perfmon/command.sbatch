@@ -41,9 +41,11 @@ which python
 # We put run command in script just to pass ${SLURM_PROCID} cleanly to each process started by srun
 cat > mycommand.sh <<'EOF'
 #!/bin/bash
+#
+./tscmd.sh
 
 # debug testing
-./rndfilesio.py io_test ${SLURM_PROCID} 10 10 1000
+taskset --cpu-list ${mycore} ./rndfilesio.py io_test ${SLURM_PROCID} 10 10 1000
 
 # lots of small files
 # ./rndfilesio.py  io_test ${SLURM_PROCID} 1000 1000 1000
