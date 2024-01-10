@@ -14,4 +14,6 @@ core_num=`echo ${SLURM_LOCALID} ${#cpu_list[*]} | awk '{print $1%$2}'`
 mycore=${cpu_list[${core_num}]}
 
 # Print out which core(s) was(were) chosen for this SLURM_LOCALID
-echo "OK "`hostname`" you should use CPU core(s) "${mycore}" with the \"${SLURM_LOCALID}\" srun instance on this node."
+# echo "OK "`hostname`" you should use CPU core(s) "${mycore}" with the \"${SLURM_LOCALID}\" srun instance on this node."
+
+echo $mycore
