@@ -14,14 +14,15 @@
 #
 #
 
-## CHANGE THIS TO YOUR DIRECTORY
-WORK_DIR=/net/fstor001/fhome/cnh/mc
+## CHANGE THIS TO YOUR DIRECTORIES
+CODE_DIR=/net/fstor001/fhome/cnh/mc
+WORK_DIR=/net/hstor001.ib/cnh/001
 
 
-cd ${WORK_DIR}
+cd ${CODE_DIR}
 
 #
-# To install ( for example  ), if not already isntalled.
+# To install everything ( for example  ), if not already isntalled.
 # $ curl -O https://repo.anaconda.com/miniconda/Miniconda3-py310_23.11.0-2-Linux-x86_64.sh
 # $ chmod +x Miniconda3-py310_23.11.0-2-Linux-x86_64.sh
 # $ ./Miniconda3-py310_23.11.0-2-Linux-x86_64.sh -p mc3 -b
@@ -38,11 +39,16 @@ source mc3/bin/activate
 conda activate py312
 which python
 
+cp ./rndfilesio.py ${WORK_DIR}
+cd ${WORK_DIR}
 # We put run command in script just to pass ${SLURM_PROCID} cleanly to each process started by srun
-cat > mycommand.sh <<'EOF'
+cat > mycommand.sh <<EOF
 #!/bin/bash
 #
-./tscmd.sh
+mycore=\`${CODE_DIR}/tscmd.sh\`
+EOF
+
+cat >> mycommand.sh <<'EOF'
 
 # debug testing
 taskset --cpu-list ${mycore} ./rndfilesio.py io_test ${SLURM_PROCID} 10 10 1000
